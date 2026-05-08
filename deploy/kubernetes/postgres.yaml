@@ -1,0 +1,17 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: appfilesync-postgres
+  namespace: appfilesync
+spec:
+  instances: 1
+  storage:
+    size: 10Gi
+  superuserSecret:
+    name: appfilesync-postgres-superuser
+  bootstrap:
+    initdb:
+      database: appfilesync
+      owner: appfilesync
+      secret:
+        name: appfilesync-postgres-app

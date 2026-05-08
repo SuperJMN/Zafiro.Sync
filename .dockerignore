@@ -1,0 +1,12 @@
+bin/
+obj/
+TestResults/
+coverage/
+.git/
+.idea/
+.vs/
+*.user
+*.suo
+*.DotSettings.user
+.env
+*.local

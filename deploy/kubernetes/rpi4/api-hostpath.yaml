@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appfilesync-api-config
+  namespace: appfilesync
+data:
+  ASPNETCORE_URLS: "http://+:8080"
+  Authentication__RequireHttpsMetadata: "true"
+  Authentication__AppIdentity__ChallengeLifetimeSeconds: "300"
+  Authentication__AppIdentity__SessionLifetimeSeconds: "900"
+  AppFileSync__MigrateOnStartup: "true"
+  AppFileSync__Apps__0__AppId: "fifo-calculator"
+  AppFileSync__Apps__0__DisplayName: "FIFO Calculator"
+  AppFileSync__Apps__0__MaxPlaintextBytes: "5242880"
+  AppFileSync__Apps__0__IsEnabled: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appfilesync-api
+  namespace: appfilesync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appfilesync-api
+  template:
+    metadata:
+      labels:
+        app: appfilesync-api
+    spec:
+      containers:
+        - name: api
+          image: mcr.microsoft.com/dotnet/aspnet:10.0
+          imagePullPolicy: IfNotPresent
+          workingDir: /app
+          command:
+            - dotnet
+            - /app/AppFileSync.Api.dll
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: appfilesync-api-config
+            - secretRef:
+                name: appfilesync-api-secrets
+          volumeMounts:
+            - name: app-publish
+              mountPath: /app
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+      volumes:
+        - name: app-publish
+          hostPath:
+            path: /home/jmn/appfilesync/publish
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appfilesync-api
+  namespace: appfilesync
+spec:
+  selector:
+    app: appfilesync-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: appfilesync-api
+  namespace: appfilesync
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: filesync.superjmn.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: appfilesync-api
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - filesync.superjmn.com
+      secretName: appfilesync-api-tls

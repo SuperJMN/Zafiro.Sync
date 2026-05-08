@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AppFileSync.Api/AppFileSync.Api.csproj" />
+    <Project Path="src/AppFileSync.Client/AppFileSync.Client.csproj" />
+    <Project Path="src/AppFileSync.Demo/AppFileSync.Demo.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AppFileSync.Api.Tests/AppFileSync.Api.Tests.csproj" />
+    <Project Path="tests/AppFileSync.Client.Tests/AppFileSync.Client.Tests.csproj" />
+  </Folder>
+</Solution>
