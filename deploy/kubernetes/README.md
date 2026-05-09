@@ -15,14 +15,14 @@ See [Server Deployment](../../docs/server-deployment.md) for the full runtime an
 Create these secrets before applying `api.yaml`:
 
 ```text
-appfilesync-api-secrets
+zafiro-sync-api-secrets
   ConnectionStrings__Postgres
 
-appfilesync-postgres-superuser
+zafiro-sync-postgres-superuser
   username
   password
 
-appfilesync-postgres-app
+zafiro-sync-postgres-app
   username
   password
 ```
@@ -37,4 +37,4 @@ kubectl apply -f postgres.yaml
 kubectl apply -f api.yaml
 ```
 
-Run `dotnet tool run dotnet-ef database update` against the target connection string, or set `AppFileSync__MigrateOnStartup=true` for a controlled first deployment.
+Run `dotnet tool run dotnet-ef database update` against the target connection string, or set `ZafiroSync__MigrateOnStartup=true` for a controlled first deployment.

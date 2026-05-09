@@ -4,6 +4,9 @@ obj/
 .idea/
 TestResults/
 coverage/
+nupkg/
+*.nupkg
+*.snupkg
 *.user
 *.suo
 *.DotSettings.user

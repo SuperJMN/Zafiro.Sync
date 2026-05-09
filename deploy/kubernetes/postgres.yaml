@@ -1,17 +1,17 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: appfilesync-postgres
-  namespace: appfilesync
+  name: zafiro-sync-postgres
+  namespace: zafiro-sync
 spec:
   instances: 1
   storage:
     size: 10Gi
   superuserSecret:
-    name: appfilesync-postgres-superuser
+    name: zafiro-sync-postgres-superuser
   bootstrap:
     initdb:
-      database: appfilesync
-      owner: appfilesync
+      database: zafiro-sync
+      owner: zafiro-sync
       secret:
-        name: appfilesync-postgres-app
+        name: zafiro-sync-postgres-app

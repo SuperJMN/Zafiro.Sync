@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj" />
+    <Project Path="src/Zafiro.Sync.Client/Zafiro.Sync.Client.csproj" />
+    <Project Path="src/Zafiro.Sync.Demo/Zafiro.Sync.Demo.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Zafiro.Sync.Api.Tests/Zafiro.Sync.Api.Tests.csproj" />
+    <Project Path="tests/Zafiro.Sync.Client.Tests/Zafiro.Sync.Client.Tests.csproj" />
+  </Folder>
+</Solution>

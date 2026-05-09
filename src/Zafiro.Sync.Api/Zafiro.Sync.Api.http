@@ -1,0 +1,12 @@
+@Zafiro.Sync.Api_HostAddress = http://localhost:5282
+
+GET {{Zafiro.Sync.Api_HostAddress}}/healthz
+Accept: application/json
+
+###
+
+GET {{Zafiro.Sync.Api_HostAddress}}/v1/apps
+Accept: application/json
+Authorization: Bearer <access-token>
+
+###

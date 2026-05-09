@@ -7,10 +7,10 @@ Create a minimal API and database where payloads are already treated as opaque c
 Tasks:
 
 - Create solution and projects:
-  - `src/AppFileSync.Api`
-  - `src/AppFileSync.Client`
-  - `tests/AppFileSync.Api.Tests`
-  - `tests/AppFileSync.Client.Tests`
+  - `src/Zafiro.Sync.Api`
+  - `src/Zafiro.Sync.Client`
+  - `tests/Zafiro.Sync.Api.Tests`
+  - `tests/Zafiro.Sync.Client.Tests`
 - Add PostgreSQL migrations.
 - Add `apps`, `files`, `file_versions`, `devices`, and `key_envelopes`.
 - Implement AppIdentity challenge/session validation.
@@ -31,7 +31,7 @@ Use fake encryption first so sync behavior can be tested independently.
 
 Tasks:
 
-- Define `IAppFileSyncClient`.
+- Define `IZafiroSyncClient`.
 - Add local metadata cache.
 - Add file cache abstraction.
 - Implement pull/push.
@@ -94,7 +94,7 @@ Use FIFOCalculator as the first real consumer.
 
 Tasks:
 
-- Add AppFileSync client package reference.
+- Add Zafiro.Sync client package reference.
 - Implement sync-backed entry catalog repository.
 - Keep local JSON storage as cache and offline fallback.
 - Add login/sync status UI.

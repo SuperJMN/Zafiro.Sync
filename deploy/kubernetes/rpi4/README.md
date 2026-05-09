@@ -8,22 +8,22 @@ This overlay matches the current Raspberry Pi Kubernetes cluster:
 - public host: `filesync.superjmn.com`
 - route prefix: `/`
 
-It avoids a custom application image. The API runs from a hostPath published directory at `/home/jmn/appfilesync/publish` using `mcr.microsoft.com/dotnet/aspnet:10.0`.
+It avoids a custom application image. The API runs from a hostPath published directory at `/home/jmn/zafiro-sync/publish` using `mcr.microsoft.com/dotnet/aspnet:10.0`.
 
 ## Publish App
 
 From the repo root:
 
 ```bash
-dotnet publish src/AppFileSync.Api/AppFileSync.Api.csproj \
+dotnet publish src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj \
   --configuration Release \
   --runtime linux-arm64 \
   --self-contained false \
-  --output /tmp/appfilesync-rpi4-publish \
+  --output /tmp/zafiro-sync-rpi4-publish \
   /p:UseAppHost=false
 
-rsync -az --delete /tmp/appfilesync-rpi4-publish/ \
-  jmn@192.168.1.29:/home/jmn/appfilesync/publish/
+rsync -az --delete /tmp/zafiro-sync-rpi4-publish/ \
+  jmn@192.168.1.29:/home/jmn/zafiro-sync/publish/
 ```
 
 ## Apply

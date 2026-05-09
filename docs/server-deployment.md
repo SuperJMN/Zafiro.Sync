@@ -1,11 +1,11 @@
 # Server Deployment
 
-This document describes how to run the Zafiro.Sync server that is implemented today in `AppFileSync.Api`.
+This document describes how to run the Zafiro.Sync server that is implemented today in `Zafiro.Sync.Api`.
 
 The deployed service is:
 
 ```text
-AppFileSync.Api
+Zafiro.Sync.Api
   - ASP.NET Core 10
   - PostgreSQL through EF Core/Npgsql
   - AppIdentity challenge/session auth
@@ -23,10 +23,10 @@ file_id       = opaque client-derived id
 
 ## Runtime Requirements
 
-- .NET 10 runtime for `AppFileSync.Api`.
+- .NET 10 runtime for `Zafiro.Sync.Api`.
 - PostgreSQL.
 - HTTPS at the ingress/proxy layer for any non-local deployment.
-- One or more configured apps under `AppFileSync:Apps`.
+- One or more configured apps under `Zafiro.Sync:Apps`.
 
 ## Configuration
 
@@ -35,14 +35,14 @@ Configuration can come from `appsettings`, environment variables, Kubernetes `Co
 | Key | Required | Description |
 | --- | --- | --- |
 | `ConnectionStrings__Postgres` | Yes | PostgreSQL connection string used by EF Core. |
-| `AppFileSync__MigrateOnStartup` | No | Applies EF migrations on startup when `true`. Use only for controlled deployments. |
-| `AppFileSync__Apps__0__AppId` | Yes | Public app namespace, for example `fifo-calculator`. |
-| `AppFileSync__Apps__0__DisplayName` | Yes | Admin/display name. |
-| `AppFileSync__Apps__0__MaxPlaintextBytes` | No | Per-file plaintext cap. Default is 5 MiB. |
-| `AppFileSync__Apps__0__IsEnabled` | No | Disables app access when `false`. Default is `true`. |
+| `ZafiroSync__MigrateOnStartup` | No | Applies EF migrations on startup when `true`. Use only for controlled deployments. |
+| `ZafiroSync__Apps__0__AppId` | Yes | Public app namespace, for example `fifo-calculator`. |
+| `ZafiroSync__Apps__0__DisplayName` | Yes | Admin/display name. |
+| `ZafiroSync__Apps__0__MaxPlaintextBytes` | No | Per-file plaintext cap. Default is 5 MiB. |
+| `ZafiroSync__Apps__0__IsEnabled` | No | Disables app access when `false`. Default is `true`. |
 | `Authentication__AppIdentity__ChallengeLifetimeSeconds` | No | Challenge lifetime. Default is `300`. |
-| `Authentication__AppIdentity__SessionLifetimeSeconds` | No | AppFileSync bearer token lifetime. Default is `900`. |
-| `Http__PathBase` | No | Route prefix when hosted behind a path, for example `/appfilesync`. |
+| `Authentication__AppIdentity__SessionLifetimeSeconds` | No | Zafiro.Sync bearer token lifetime. Default is `900`. |
+| `Http__PathBase` | No | Route prefix when hosted behind a path, for example `/zafiro-sync`. |
 | `Authentication__Authority` / `Authentication__Audience` | No | Optional OIDC compatibility mode. Leave empty for AppIdentity-only deployments. |
 
 `OidcClientId` still exists in the app model for compatibility, but AppIdentity deployments can omit it. The app registration service stores `AppId` as the compatibility client id when `OidcClientId` is empty.
@@ -52,19 +52,19 @@ Configuration can come from `appsettings`, environment variables, Kubernetes `Co
 Example environment variables:
 
 ```text
-AppFileSync__Apps__0__AppId=fifo-calculator
-AppFileSync__Apps__0__DisplayName=FIFO Calculator
-AppFileSync__Apps__0__MaxPlaintextBytes=5242880
-AppFileSync__Apps__0__IsEnabled=true
+ZafiroSync__Apps__0__AppId=fifo-calculator
+ZafiroSync__Apps__0__DisplayName=FIFO Calculator
+ZafiroSync__Apps__0__MaxPlaintextBytes=5242880
+ZafiroSync__Apps__0__IsEnabled=true
 ```
 
 Multiple apps use the normal ASP.NET Core array convention:
 
 ```text
-AppFileSync__Apps__1__AppId=pokemon
-AppFileSync__Apps__1__DisplayName=Pokemon
-AppFileSync__Apps__1__MaxPlaintextBytes=5242880
-AppFileSync__Apps__1__IsEnabled=true
+ZafiroSync__Apps__1__AppId=pokemon
+ZafiroSync__Apps__1__DisplayName=Pokemon
+ZafiroSync__Apps__1__MaxPlaintextBytes=5242880
+ZafiroSync__Apps__1__IsEnabled=true
 ```
 
 The hosted service upserts configured apps on startup. It does not delete apps that are removed from configuration.
@@ -81,21 +81,21 @@ Apply migrations to the configured database:
 
 ```bash
 dotnet tool run dotnet-ef database update \
-  --project src/AppFileSync.Api/AppFileSync.Api.csproj \
-  --startup-project src/AppFileSync.Api/AppFileSync.Api.csproj
+  --project src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj \
+  --startup-project src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj
 ```
 
-For first-run personal deployments, `AppFileSync__MigrateOnStartup=true` is supported. For repeatable production deployments, prefer applying migrations as a separate deployment step.
+For first-run personal deployments, `ZafiroSync__MigrateOnStartup=true` is supported. For repeatable production deployments, prefer applying migrations as a separate deployment step.
 
 ## Local Run
 
 Start PostgreSQL however you prefer. A minimal local container is:
 
 ```bash
-docker run --rm --name appfilesync-postgres \
-  -e POSTGRES_USER=appfilesync \
-  -e POSTGRES_PASSWORD=appfilesync \
-  -e POSTGRES_DB=appfilesync \
+docker run --rm --name zafiro-sync-postgres \
+  -e POSTGRES_USER=zafiro-sync \
+  -e POSTGRES_PASSWORD=zafiro-sync \
+  -e POSTGRES_DB=zafiro-sync \
   -p 5432:5432 \
   postgres:17-alpine
 ```
@@ -103,10 +103,10 @@ docker run --rm --name appfilesync-postgres \
 Run the API:
 
 ```bash
-AppFileSync__MigrateOnStartup=true \
-AppFileSync__Apps__0__AppId=fifo-calculator \
-AppFileSync__Apps__0__DisplayName="FIFO Calculator" \
-dotnet run --project src/AppFileSync.Api/AppFileSync.Api.csproj
+ZafiroSync__MigrateOnStartup=true \
+ZafiroSync__Apps__0__AppId=fifo-calculator \
+ZafiroSync__Apps__0__DisplayName="FIFO Calculator" \
+dotnet run --project src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj
 ```
 
 Check health:
@@ -123,18 +123,18 @@ The exact local port depends on the ASP.NET launch profile. In containers and Ku
 The repository includes a multi-stage `Dockerfile`:
 
 ```bash
-docker build -t appfilesync-api:local .
+docker build -t zafiro-sync-api:local .
 ```
 
 Run it against a reachable PostgreSQL instance:
 
 ```bash
 docker run --rm -p 8080:8080 \
-  -e ConnectionStrings__Postgres="Host=host.docker.internal;Port=5432;Database=appfilesync;Username=appfilesync;Password=appfilesync" \
-  -e AppFileSync__MigrateOnStartup=true \
-  -e AppFileSync__Apps__0__AppId=fifo-calculator \
-  -e AppFileSync__Apps__0__DisplayName="FIFO Calculator" \
-  appfilesync-api:local
+  -e ConnectionStrings__Postgres="Host=host.docker.internal;Port=5432;Database=zafiro-sync;Username=zafiro-sync;Password=zafiro-sync" \
+  -e ZafiroSync__MigrateOnStartup=true \
+  -e ZafiroSync__Apps__0__AppId=fifo-calculator \
+  -e ZafiroSync__Apps__0__DisplayName="FIFO Calculator" \
+  zafiro-sync-api:local
 ```
 
 Health endpoint:
@@ -156,8 +156,8 @@ kubectl apply -f deploy/kubernetes/api.yaml
 Before applying `api.yaml`, create the API secret:
 
 ```bash
-kubectl -n appfilesync create secret generic appfilesync-api-secrets \
-  --from-literal='ConnectionStrings__Postgres=Host=appfilesync-postgres-rw;Port=5432;Database=appfilesync;Username=appfilesync;Password=...'
+kubectl -n zafiro-sync create secret generic zafiro-sync-api-secrets \
+  --from-literal='ConnectionStrings__Postgres=Host=zafiro-sync-postgres-rw;Port=5432;Database=zafiro-sync;Username=zafiro-sync;Password=...'
 ```
 
 The generic `api.yaml` configures:
@@ -170,8 +170,8 @@ The generic `api.yaml` configures:
 
 Replace:
 
-- `ghcr.io/your-org/appfilesync-api:latest`
-- `appfilesync.example.com`
+- `ghcr.io/your-org/zafiro-sync-api:latest`
+- `zafiro-sync.example.com`
 - the cert-manager cluster issuer annotation if needed
 - app registrations for your real apps
 
@@ -183,24 +183,24 @@ The `deploy/kubernetes/rpi4` overlay is tailored for the existing Raspberry Pi c
 - `letsencrypt-production` cluster issuer.
 - `filesync.superjmn.com` host.
 - `local-path` PostgreSQL storage.
-- hostPath-published API binaries at `/home/jmn/appfilesync/publish`.
+- hostPath-published API binaries at `/home/jmn/zafiro-sync/publish`.
 
 Publish API binaries for ARM64:
 
 ```bash
-dotnet publish src/AppFileSync.Api/AppFileSync.Api.csproj \
+dotnet publish src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj \
   --configuration Release \
   --runtime linux-arm64 \
   --self-contained false \
-  --output /tmp/appfilesync-rpi4-publish \
+  --output /tmp/zafiro-sync-rpi4-publish \
   /p:UseAppHost=false
 ```
 
 Copy them to the Pi:
 
 ```bash
-rsync -az --delete /tmp/appfilesync-rpi4-publish/ \
-  jmn@192.168.1.29:/home/jmn/appfilesync/publish/
+rsync -az --delete /tmp/zafiro-sync-rpi4-publish/ \
+  jmn@192.168.1.29:/home/jmn/zafiro-sync/publish/
 ```
 
 Apply the overlay:
@@ -226,7 +226,7 @@ Clients do not send passwords or API keys to sync files.
 3. Server returns a short-lived random challenge.
 4. Client signs the challenge with the local private key.
 5. Client calls `POST /v1/auth/sessions`.
-6. Server verifies the signature and returns an `afs1.*` bearer token.
+6. Server verifies the signature and returns a `zs1.*` bearer token.
 7. Client uses that bearer token on `/v1/apps/{appId}/...`.
 
 The token contains:
@@ -270,5 +270,5 @@ Then verify with a real client identity:
 The API test suite covers the implemented auth and isolation behavior:
 
 ```bash
-dotnet test AppFileSync.slnx
+dotnet test Zafiro.Sync.slnx
 ```

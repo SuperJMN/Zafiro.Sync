@@ -1,45 +1,46 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: appfilesync-api-config
-  namespace: appfilesync
+  name: zafiro-sync-api-config
+  namespace: zafiro-sync
 data:
   Authentication__RequireHttpsMetadata: "true"
+  Authentication__Demo__Enabled: "false"
   Authentication__AppIdentity__ChallengeLifetimeSeconds: "300"
   Authentication__AppIdentity__SessionLifetimeSeconds: "900"
-  AppFileSync__MigrateOnStartup: "false"
-  AppFileSync__Apps__0__AppId: "fifo-calculator"
-  AppFileSync__Apps__0__DisplayName: "FIFO Calculator"
-  AppFileSync__Apps__0__MaxPlaintextBytes: "5242880"
-  AppFileSync__Apps__0__IsEnabled: "true"
+  ZafiroSync__MigrateOnStartup: "false"
+  ZafiroSync__Apps__0__AppId: "fifo-calculator"
+  ZafiroSync__Apps__0__DisplayName: "FIFO Calculator"
+  ZafiroSync__Apps__0__MaxPlaintextBytes: "5242880"
+  ZafiroSync__Apps__0__IsEnabled: "true"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appfilesync-api
-  namespace: appfilesync
+  name: zafiro-sync-api
+  namespace: zafiro-sync
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: appfilesync-api
+      app: zafiro-sync-api
   template:
     metadata:
       labels:
-        app: appfilesync-api
+        app: zafiro-sync-api
     spec:
       containers:
         - name: api
-          image: ghcr.io/your-org/appfilesync-api:latest
+          image: ghcr.io/your-org/zafiro-sync-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           envFrom:
             - configMapRef:
-                name: appfilesync-api-config
+                name: zafiro-sync-api-config
             - secretRef:
-                name: appfilesync-api-secrets
+                name: zafiro-sync-api-secrets
           readinessProbe:
             httpGet:
               path: /readyz
@@ -56,11 +57,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: appfilesync-api
-  namespace: appfilesync
+  name: zafiro-sync-api
+  namespace: zafiro-sync
 spec:
   selector:
-    app: appfilesync-api
+    app: zafiro-sync-api
   ports:
     - name: http
       port: 80
@@ -69,23 +70,23 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: appfilesync-api
-  namespace: appfilesync
+  name: zafiro-sync-api
+  namespace: zafiro-sync
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
     - hosts:
-        - appfilesync.example.com
-      secretName: appfilesync-api-tls
+        - zafiro-sync.example.com
+      secretName: zafiro-sync-api-tls
   rules:
-    - host: appfilesync.example.com
+    - host: zafiro-sync.example.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: appfilesync-api
+                name: zafiro-sync-api
                 port:
                   name: http

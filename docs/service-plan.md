@@ -69,14 +69,14 @@ The human path, content type, and app metadata go into encrypted metadata.
 
 ```text
 Avalonia/MAUI/WPF/web app
-  AppFileSync.Client
+  Zafiro.Sync.Client
     - local cache
     - encryption
     - conflict handling
         |
         | HTTPS + AppIdentity bearer token
         v
-AppFileSync.Api
+Zafiro.Sync.Api
   - Ed25519 challenge/session validation
   - app authorization
   - user/app/file ownership
@@ -98,7 +98,7 @@ Minimum production-like topology:
 
 | Component | Purpose |
 | --- | --- |
-| `appfilesync-api` | ASP.NET Core sync API |
+| `zafiro-sync-api` | ASP.NET Core sync API |
 | PostgreSQL | Metadata and encrypted file bytes |
 | ingress-nginx or Traefik | Public HTTPS |
 | cert-manager | TLS certificates |

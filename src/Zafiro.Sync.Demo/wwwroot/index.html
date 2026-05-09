@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zafiro.Sync Demo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">filesync.superjmn.com</p>
+          <h1>Configuración sincronizada</h1>
+        </div>
+        <div class="status" id="status">Cargando</div>
+      </header>
+
+      <form id="settings-form" class="editor">
+        <label for="content">settings/demo.json</label>
+        <textarea id="content" spellcheck="false"></textarea>
+        <div class="actions">
+          <button type="button" id="reload">Cargar</button>
+          <button type="submit" class="primary">Guardar</button>
+        </div>
+      </form>
+
+      <section class="identity">
+        <div class="identity-header">
+          <div>
+            <p class="eyebrow">Identidad local</p>
+            <h2 id="identity-status">Sin identidad</h2>
+          </div>
+          <button type="button" id="create-identity">Crear identidad</button>
+        </div>
+
+        <dl class="identity-metadata">
+          <div>
+            <dt>Dispositivo</dt>
+            <dd id="identity-device">-</dd>
+          </div>
+          <div>
+            <dt>Clave pública</dt>
+            <dd id="identity-public-key">-</dd>
+          </div>
+        </dl>
+
+        <div class="identity-actions">
+          <label>
+            Contraseña
+            <input type="password" id="export-password" autocomplete="new-password">
+          </label>
+          <button type="button" id="export-identity">Exportar</button>
+          <label>
+            Archivo
+            <input type="file" id="import-file" accept="application/json">
+          </label>
+          <label>
+            Contraseña
+            <input type="password" id="import-password" autocomplete="current-password">
+          </label>
+          <button type="button" id="import-identity">Importar</button>
+        </div>
+      </section>
+
+      <dl class="metadata">
+        <div>
+          <dt>Revisión</dt>
+          <dd id="revision">-</dd>
+        </div>
+        <div>
+          <dt>Archivo</dt>
+          <dd id="file-id">-</dd>
+        </div>
+        <div>
+          <dt>Última operación</dt>
+          <dd id="last-operation">-</dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

@@ -46,14 +46,14 @@ It is designed for data like settings, small JSON databases, app state snapshots
 
 The first version intentionally stores encrypted file payloads in PostgreSQL. With a hard 5 MiB file limit, this keeps the service simpler than adding an object store from day one. An S3/MinIO storage adapter can be added later if real usage requires it.
 
-The repository has been renamed to Zafiro.Sync. The current API, SDK, solution, and configuration keys still use the existing `AppFileSync.*` names while downstream integrations settle.
+The repository, solution, projects, namespaces, and NuGet package are named for Zafiro.Sync. Environment configuration uses the `ZafiroSync__...` prefix because deployment platforms commonly reject dots in environment variable names.
 
 ## Development
 
 Build and test:
 
 ```bash
-dotnet test AppFileSync.slnx
+dotnet test Zafiro.Sync.slnx
 ```
 
 Create or update the PostgreSQL schema:
@@ -61,8 +61,8 @@ Create or update the PostgreSQL schema:
 ```bash
 dotnet tool restore
 dotnet tool run dotnet-ef database update \
-  --project src/AppFileSync.Api/AppFileSync.Api.csproj \
-  --startup-project src/AppFileSync.Api/AppFileSync.Api.csproj
+  --project src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj \
+  --startup-project src/Zafiro.Sync.Api/Zafiro.Sync.Api.csproj
 ```
 
 Run the API with configuration supplied through `appsettings`, environment variables, Kubernetes config, or user secrets:
@@ -73,17 +73,17 @@ Authentication__Authority
 Authentication__Audience
 Authentication__AppIdentity__ChallengeLifetimeSeconds
 Authentication__AppIdentity__SessionLifetimeSeconds
-AppFileSync__Apps__0__AppId
-AppFileSync__Apps__0__DisplayName
+ZafiroSync__Apps__0__AppId
+ZafiroSync__Apps__0__DisplayName
 ```
 
-Set `AppFileSync__MigrateOnStartup=true` only for controlled deployments where the API process is allowed to apply migrations.
+Set `ZafiroSync__MigrateOnStartup=true` only for controlled deployments where the API process is allowed to apply migrations.
 
 The primary auth flow is:
 
 ```text
 POST /v1/auth/challenges -> sign challenge with local Ed25519 key
-POST /v1/auth/sessions   -> receive short AppFileSync bearer token
+POST /v1/auth/sessions   -> receive short Zafiro.Sync bearer token
 ```
 
 The token maps to `sub = ed25519:{publicKey}` and `azp = {appId}`, so the existing app and owner isolation model is preserved.

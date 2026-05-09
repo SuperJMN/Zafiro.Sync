@@ -2,7 +2,7 @@
 
 All endpoints except health checks and AppIdentity session bootstrap require a valid bearer token.
 
-The primary token is an AppFileSync session token created from a local Ed25519 identity. The API infers the owner from `sub = ed25519:{publicKey}`. Clients never send `userId`.
+The primary token is an Zafiro.Sync session token created from a local Ed25519 identity. The API infers the owner from `sub = ed25519:{publicKey}`. Clients never send `userId`.
 
 OIDC bearer tokens can still be accepted when configured, but they are not the default path.
 
@@ -65,7 +65,7 @@ Response:
 
 ### `POST /v1/auth/sessions`
 
-Verifies possession of the private key and returns a short AppFileSync bearer token.
+Verifies possession of the private key and returns a short Zafiro.Sync bearer token.
 
 Request:
 
@@ -82,7 +82,7 @@ Response:
 
 ```json
 {
-  "accessToken": "afs1....",
+  "accessToken": "zs1....",
   "expiresAt": "2026-05-08T12:15:00Z",
   "tokenType": "Bearer"
 }

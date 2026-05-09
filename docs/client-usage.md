@@ -1,6 +1,6 @@
 # Client Usage
 
-This document describes the Zafiro.Sync client shape that is implemented today in `AppFileSync.Client`.
+This document describes the Zafiro.Sync client shape that is implemented today in `Zafiro.Sync.Client`.
 
 The SDK gives an app:
 
@@ -15,7 +15,7 @@ The server never receives a user id, plaintext file path, or plaintext file cont
 
 ## Requirements
 
-- .NET 9 or later for `AppFileSync.Client`.
+- .NET 9 or later for `Zafiro.Sync.Client`.
 - A registered server-side `appId`.
 - A writable local place for the identity export and sync cursor.
 
@@ -44,7 +44,7 @@ Because `file_id` is derived from the app data key, importing the same identity 
 
 ```csharp
 using System.Text;
-using AppFileSync.Client;
+using Zafiro.Sync.Client;
 
 var identity = await identityStore.LoadOrCreate("fifo-calculator", "FIFO Calculator");
 var httpClient = new HttpClient
@@ -52,9 +52,9 @@ var httpClient = new HttpClient
     BaseAddress = new Uri("https://filesync.superjmn.com"),
 };
 
-var sync = new AppFileSyncClient(
+var sync = new ZafiroSyncClient(
     httpClient,
-    new AppFileSyncClientOptions
+    new ZafiroSyncClientOptions
     {
         ServiceBaseUri = new Uri("https://filesync.superjmn.com"),
         AppId = identity.AppId,
@@ -72,7 +72,7 @@ var saved = await sync.SaveAsync(
     baseRevision: previousRevision);
 ```
 
-The example assumes the app owns `identityStore` and `stateStore`. AppFileSync provides `InMemoryAppFileSyncStateStore` for tests and demos, but real apps should persist cursors and revisions.
+The example assumes the app owns `identityStore` and `stateStore`. Zafiro.Sync provides `InMemoryZafiroSyncStateStore` for tests and demos, but real apps should persist cursors and revisions.
 
 One minimal file-backed identity store looks like this:
 
@@ -135,7 +135,7 @@ Export:
 
 ```csharp
 var exportBytes = identity.Export(password);
-await File.WriteAllBytesAsync("appfilesync-fifo-calculator-identity.json", exportBytes);
+await File.WriteAllBytesAsync("zafiro-sync-fifo-calculator-identity.json", exportBytes);
 ```
 
 Import:
@@ -219,7 +219,7 @@ foreach (var change in syncResult.Changes)
 }
 ```
 
-The current SDK returns change descriptors and persists the cursor through `IAppFileSyncStateStore`. It does not yet provide a full local file cache or automatic conflict resolver.
+The current SDK returns change descriptors and persists the cursor through `IZafiroSyncStateStore`. It does not yet provide a full local file cache or automatic conflict resolver.
 
 ## Deleting Files
 
@@ -243,7 +243,7 @@ Deletes create tombstones on the server so other devices can observe the deletio
 
 ## Demo App
 
-`src/AppFileSync.Demo` is the executable reference for the current flow. It implements:
+`src/Zafiro.Sync.Demo` is the executable reference for the current flow. It implements:
 
 - local identity creation;
 - identity export/import;
@@ -260,7 +260,7 @@ Configuration:
     "AppId": "fifo-calculator",
     "LogicalPath": "settings/demo.json",
     "IdentityFilePath": "settings/demo.identity.json",
-    "LocalIdentityPassword": "appfilesync-demo-local"
+    "LocalIdentityPassword": "zafiro-sync-demo-local"
   }
 }
 ```
