@@ -1,10 +1,10 @@
-# AppFileSync
+# Zafiro.Sync
 
 Self-hosted synchronization service for small and medium encrypted app files.
 
 ## Goal
 
-AppFileSync is a narrow, self-hosted sync backend for applications that need to keep a small set of user files synchronized across devices.
+Zafiro.Sync is a narrow, self-hosted sync backend for applications that need to keep a small set of user files synchronized across devices.
 
 The target shape is:
 
@@ -45,6 +45,8 @@ It is designed for data like settings, small JSON databases, app state snapshots
 - Client-side AEAD encryption
 
 The first version intentionally stores encrypted file payloads in PostgreSQL. With a hard 5 MiB file limit, this keeps the service simpler than adding an object store from day one. An S3/MinIO storage adapter can be added later if real usage requires it.
+
+The repository has been renamed to Zafiro.Sync. The current API, SDK, solution, and configuration keys still use the existing `AppFileSync.*` names while downstream integrations settle.
 
 ## Development
 

@@ -1,6 +1,6 @@
 # Client Usage
 
-This document describes the client shape that is implemented today in `AppFileSync.Client`.
+This document describes the Zafiro.Sync client shape that is implemented today in `AppFileSync.Client`.
 
 The SDK gives an app:
 

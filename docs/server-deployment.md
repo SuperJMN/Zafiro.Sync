@@ -1,6 +1,6 @@
 # Server Deployment
 
-This document describes how to run the server that is implemented today in `AppFileSync.Api`.
+This document describes how to run the Zafiro.Sync server that is implemented today in `AppFileSync.Api`.
 
 The deployed service is:
 
